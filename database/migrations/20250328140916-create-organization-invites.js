@@ -21,6 +21,15 @@ module.exports = {
         allowNull: false,
         onDelete: "CASCADE",
       },
+      role_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: "roles",
+          key: "id",
+        },
+        allowNull: false,
+        onDelete: "CASCADE",
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: false,

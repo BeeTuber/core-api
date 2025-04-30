@@ -30,11 +30,6 @@ module.exports = {
         allowNull: false,
         onDelete: "RESTRICT",
       },
-      is_default: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
       ...changelog,
     });
   },

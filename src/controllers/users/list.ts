@@ -2,7 +2,7 @@ import { initializeApp } from "firebase-admin/app";
 import { Auth, GetUsersResult } from "firebase-admin/auth";
 import { chunk } from "lodash";
 import { z } from "zod";
-import { OrganizationUser, Roles } from "../../models";
+import { OrganizationUser, Role } from "../../models";
 import { Controller, Handler } from "../../types";
 
 /**
@@ -13,7 +13,7 @@ const ListUsersRequestSchema = undefined;
 const ListUsersResponseSchema = z.array(
   z.object({
     id: z.string(),
-    role: z.nativeEnum(Roles),
+    role: z.object({}),
     display_name: z.string(),
     photo_url: z.string().optional(),
   })
@@ -32,6 +32,7 @@ const handler: Handler<any, z.infer<typeof ListUsersResponseSchema>> = async (
   // find matching users for organization
   const users = await OrganizationUser.findAll({
     where: { organization_id: request.organizationId },
+    include: [Role],
   });
 
   // get user info from firebase
@@ -54,7 +55,7 @@ const handler: Handler<any, z.infer<typeof ListUsersResponseSchema>> = async (
     const firebaseUser = firebaseUsers.find((fbu) => fbu.uid === user.user_id);
     return {
       id: user.user_id,
-      role: user.role,
+      role: user.role!,
       display_name: firebaseUser?.displayName ?? "UNKNOWN_USER",
       photo_url: firebaseUser?.photoURL,
     };

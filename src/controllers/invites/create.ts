@@ -43,7 +43,7 @@ const handler: Handler<
   const url = `${websiteBaseUrl}/invite/${invite.id}`;
   await queueSendEmail(EmailTemplates.InviteUser, { url, expires: expires.toRelative() });
 
-  return reply.code(204).send();
+  return reply.code(201).send();
 };
 
 /**
@@ -54,7 +54,7 @@ export const listUsersController: Controller = {
   schema: {
     body: CreateInviteRequestSchema,
     response: {
-      204: CreateInviteResponseSchema,
+      201: CreateInviteResponseSchema,
     },
   },
 };
