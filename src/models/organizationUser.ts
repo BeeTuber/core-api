@@ -4,18 +4,13 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
 import { Organization } from "./organization";
-
-export enum Roles {
-  Owner = "owner",
-  Admin = "admin",
-  Editor = "editor",
-  Moderator = "moderator",
-}
+import { Role } from "./role";
 
 @Table({
   tableName: "organization_users",
@@ -32,18 +27,16 @@ export class OrganizationUser extends Model {
   @Column(DataType.STRING)
   user_id!: string;
 
-  @Column(DataType.ENUM(...Object.values(Roles)))
-  role!: Roles;
-
-  @Column(DataType.BOOLEAN)
-  is_default!: boolean;
-
-  @Column(DataType.BOOLEAN)
-  is_pending!: boolean;
+  @Column(DataType.UUIDV4)
+  @ForeignKey(() => Role)
+  role_id!: string;
 
   /**
    * relations
    */
   @BelongsTo(() => Organization)
-  organization!: Organization;
+  organization?: Organization;
+
+  @HasOne(() => Role)
+  role?: Role;
 }

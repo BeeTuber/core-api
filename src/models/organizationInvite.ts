@@ -3,35 +3,38 @@ import {
   BelongsTo,
   Column,
   DataType,
+  Default,
   ForeignKey,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
 import { Organization } from "./organization";
-import { Roles } from "./organizationUser";
 
 @Table({
-  tableName: "organization_invites",
+  tableName: "organization_invite",
   timestamps: true,
   underscored: true,
 })
-export class OrganizationUser extends Model {
+export class OrganizationInvite extends Model {
   @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  declare id: string;
+
   @ForeignKey(() => Organization)
   @Column(DataType.UUID)
   organization_id!: string;
 
-  @PrimaryKey
   @Column(DataType.STRING)
-  user_id!: string;
+  email!: string
 
-  @Column(DataType.ENUM(...Object.values(Roles)))
-  role!: Roles;
+  @Column(DataType.DATE)
+  expires_at!: Date
 
   /**
    * relations
    */
   @BelongsTo(() => Organization)
-  organization!: Organization;
+  organization?: Organization;
 }

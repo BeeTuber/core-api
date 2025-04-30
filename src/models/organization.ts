@@ -9,6 +9,7 @@ import {
   Table,
 } from "sequelize-typescript";
 import { Connection } from "./connection";
+import { OrganizationInvite } from "./organizationInvite";
 import { OrganizationUser } from "./organizationUser";
 import { StreamPreset } from "./streamPreset";
 
@@ -37,6 +38,9 @@ export class Organization extends Model {
    */
   @HasMany(() => OrganizationUser)
   users?: OrganizationUser[];
+
+  @HasMany(() => OrganizationInvite)
+  invites?: OrganizationUser[];
 
   @HasMany(() => StreamPreset)
   streamPresets?: StreamPreset[];

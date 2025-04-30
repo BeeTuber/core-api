@@ -1,17 +1,19 @@
 import fastifyCors from "@fastify/cors";
 import fastifyHelmet from "@fastify/helmet";
 import fastifySensible from "@fastify/sensible";
-import fastify, { FastifyError } from "fastify";
+import fastify, { FastifyError, FastifyInstance } from "fastify";
 import { ZodError } from "zod";
 import config from "./config";
 import { models } from "./models";
-import { authUser, fastifySequelize, organizationCheck } from "./plugins";
+import { authUser, fastifyRedis, fastifySequelize } from "./plugins";
 import { registerRoutes } from "./router";
 import { ErrorResponseBody } from "./types";
 
+export let app: FastifyInstance
+
 const start = () => {
   // init app
-  const app = fastify({
+  app = fastify({
     logger: config.isProd
       ? true
       : {
@@ -44,9 +46,11 @@ const start = () => {
   app.register(fastifySensible);
   app.register(fastifyHelmet);
   app.register(fastifyCors);
-  app.register(organizationCheck);
   app.register(authUser);
+
+  // DB connections
   app.register(fastifySequelize, { ...config.db, models });
+  app.register(fastifyRedis, config.redis);
 
   // serve
   registerRoutes(app);

@@ -28,6 +28,13 @@ export const vault = {
   mount: process.env.VAULT_MOUNT_ORGS ?? "organizations",
 };
 
+export const redis = {
+  url: process.env.REDIS_URL,
+};
+
+/**
+ * Storage config
+ */
 export const s3: { client: S3ClientConfig; buckets: Record<string, string> } = {
   client: {
     endpoint: process.env.S3_ENDPOINT,
@@ -56,6 +63,7 @@ export const web = {
  * Misc.
  */
 export const isProd = process.env.NODE_ENV === "production";
+export const websiteBaseUrl = process.env.WEBSITE_BASE_URL || "https://beetuber.com"
 
 /**
  * export as one object
@@ -64,6 +72,7 @@ export default {
   db,
   s3,
   web,
+  redis,
   vault,
   isProd,
 };

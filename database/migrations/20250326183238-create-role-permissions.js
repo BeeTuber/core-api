@@ -5,35 +5,26 @@ const { changelog } = require("../attributes");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("organization_users", {
-      organization_id: {
+    await queryInterface.createTable("role_permissions", {
+      role_id: {
         primaryKey: true,
-        type: Sequelize.UUID,
-        references: {
-          model: "organizations",
-          key: "id",
-        },
-        allowNull: false,
-        onDelete: "CASCADE",
-      },
-      user_id: {
-        primaryKey: true,
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      role: {
         type: Sequelize.UUID,
         references: {
           model: "roles",
           key: "id",
         },
         allowNull: false,
-        onDelete: "RESTRICT",
+        onDelete: "CASCADE",
       },
-      is_default: {
-        type: Sequelize.BOOLEAN,
+      permission_id: {
+        primaryKey: true,
+        type: Sequelize.STRING,
+        references: {
+          model: "permissions",
+          key: "id",
+        },
         allowNull: false,
-        defaultValue: false,
+        onDelete: "CASCADE",
       },
       ...changelog,
     });

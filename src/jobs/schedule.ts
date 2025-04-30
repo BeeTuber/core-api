@@ -1,5 +1,6 @@
 import { Queue } from "bullmq";
 import { hoursToMillis } from "../helpers";
+import { Queues } from "../worker";
 import {
   twitchCategoriesJob,
   twitchCategoriesJobName,
@@ -15,8 +16,6 @@ export const scheduleJobs: Record<string, () => Promise<void>> = {
   [twitchCategoriesJobName]: twitchCategoriesJob,
 };
 
-export const registerSchedule = async () => {
-  const dataSyncQueue = new Queue("data-sync");
-
-  await addJob(dataSyncQueue, twitchCategoriesJobName, 6);
+export const registerSchedule = async (queues: Queues) => {
+  await addJob(queues.default, twitchCategoriesJobName, 6);
 };

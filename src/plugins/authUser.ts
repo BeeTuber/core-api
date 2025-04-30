@@ -7,10 +7,13 @@ import fastifyPlugin from "fastify-plugin";
 declare module "fastify" {
   interface FastifyRequest {
     userId?: string;
+    authTokenHash?: string;
+    organizationId?: string;
   }
 
   interface FastifyContextConfig {
     noAuth?: boolean;
+    bypassOrganizationCheck?: boolean;
   }
 }
 
@@ -21,6 +24,9 @@ type AuthUserPluginOptions = {};
 const organizationCheckMiddleware: FastifyPluginCallback<
   AuthUserPluginOptions
 > = (fastifyInstance: FastifyInstance, opts: AuthUserPluginOptions, done) => {
+  /**
+   * User Data
+   */
   fastifyInstance.addHook("onRequest", async (request, reply: FastifyReply) => {
     const { noAuth } = request.routeOptions.config;
 
@@ -33,7 +39,7 @@ const organizationCheckMiddleware: FastifyPluginCallback<
 
     try {
       const token = authHeader!.replace(/^Bearer /i, "");
-      const [, rawPayload] = token.split(".");
+      const [, rawPayload, tokenHash] = token.split(".");
       const { iat, exp, sub } = JSON.parse(
         Buffer.from(rawPayload, "base64").toString("utf-8")
       );
@@ -43,9 +49,29 @@ const organizationCheckMiddleware: FastifyPluginCallback<
       }
 
       fastifyInstance.decorateRequest("userId", sub);
+      fastifyInstance.decorateRequest("authTokenHash", tokenHash);
     } catch (err) {
       console.error("JWT parsing failed", err);
       return reply.code(401).send({ error: "Invalid auth token" });
+    }
+  });
+
+  /**
+   * Org ID
+   */
+  fastifyInstance.addHook("onRequest", async (request, reply: FastifyReply) => {
+    const { bypassOrganizationCheck } = request.routeOptions.config;
+
+    const organizationId = request.headers["x-organization-id"] as
+      | string
+      | undefined;
+    fastifyInstance.decorateRequest("organizationId", organizationId);
+
+    if (!organizationId && !bypassOrganizationCheck) {
+      const msg =
+        "Missing organization identifier. Provide x-organization-id header.";
+      reply.code(400).send({ error: msg });
+      return;
     }
   });
 

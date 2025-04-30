@@ -1,0 +1,38 @@
+<mjml>
+  <mj-body background-color="#f4f4f4">
+    <mj-section background-color="#ffffff" padding="20px">
+      <mj-column>
+        <!-- <mj-image
+          width="100px"
+          src="https://yourdomain.com/logo.png"
+          alt="Company Logo"
+        /> -->
+        <mj-divider border-color="#cccccc" />
+        <mj-text font-size="20px" font-weight="bold" color="#333333">
+          You're Invited!
+        </mj-text>
+        <mj-text font-size="16px" color="#555555">
+          You've been invited to join <strong>{{ orgName }}'s Beetuber</strong>.
+          Click the button below to accept your invitation.
+        </mj-text>
+        <mj-button
+          href="{{ url }}"
+          background-color="#007BFF"
+          color="#ffffff"
+          font-size="16px"
+          padding="20px"
+        >
+          Accept Invitation
+        </mj-button>
+        <mj-text font-size="14px" color="#999999">
+          If you did not expect this invitation, you can safely ignore this
+          email.
+        </mj-text>
+        <mj-divider border-color="#eeeeee" />
+        <mj-text font-size="12px" color="#aaaaaa">
+          © {{ currentYear }} BeeTuber.<br />
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
