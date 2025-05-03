@@ -2,8 +2,8 @@ import { initializeApp } from "firebase-admin/app";
 import { Auth, GetUsersResult } from "firebase-admin/auth";
 import { chunk } from "lodash";
 import { z } from "zod";
-import { OrganizationUser, Role } from "../../models";
-import { Controller, Handler } from "../../types";
+import { OrganizationUser, Role } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas

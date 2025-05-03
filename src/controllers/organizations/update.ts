@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { Organization } from "../../models";
-import { Controller, Handler } from "../../types";
+import { checkPermission } from "~/helpers";
+import { Organization } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas
@@ -21,6 +22,9 @@ const handler: Handler<
   z.infer<typeof UpdateOrganizationRequestSchema>,
   z.infer<typeof UpdateOrganizationResponseSchema>
 > = async (request, reply) => {
+  if (!(await checkPermission(request, "organization.update"))) {
+    return reply.code(403).send({ error: "Permission denied" });
+  }
 
   // store new org in DB
   const org = await Organization.create(

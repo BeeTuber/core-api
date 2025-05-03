@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { checkPermission } from "../../helpers/auth";
-import { OrganizationInvite } from "../../models";
-import { Controller, Handler } from "../../types";
+import { checkPermission } from "~/helpers";
+import { OrganizationInvite } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas

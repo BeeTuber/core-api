@@ -1,11 +1,10 @@
 import { DateTime } from "luxon";
 import { z } from "zod";
-import { websiteBaseUrl } from "../../config";
-import { queueSendEmail } from "../../helpers";
-import { checkPermission } from "../../helpers/auth";
-import { EmailTemplates } from "../../jobs/sendEmail";
-import { OrganizationInvite } from "../../models";
-import { Controller, Handler } from "../../types";
+import { websiteBaseUrl } from "~/config";
+import { checkPermission, queueSendEmail } from "~/helpers";
+import { EmailTemplates } from "~/jobs/sendEmail";
+import { OrganizationInvite } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas
@@ -41,7 +40,10 @@ const handler: Handler<
 
   // send invite email
   const url = `${websiteBaseUrl}/invite/${invite.id}`;
-  await queueSendEmail(EmailTemplates.InviteUser, { url, expires: expires.toRelative() });
+  await queueSendEmail(EmailTemplates.InviteUser, {
+    url,
+    expires: expires.toRelative(),
+  });
 
   return reply.code(201).send();
 };

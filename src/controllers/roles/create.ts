@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { StreamCategory, StreamPreset } from "../../models";
-import { Controller, Handler } from "../../types";
+import { checkPermission } from "~/helpers";
+import { StreamCategory, StreamPreset } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas
@@ -23,6 +24,10 @@ const handler: Handler<
   z.infer<typeof CreateRoleRequestSchema>,
   z.infer<typeof CreateRoleResponseSchema>
 > = async (request, reply) => {
+  if (!(await checkPermission(request, "roles.write"))) {
+    return reply.code(403).send({ error: "Permission denied" });
+  }
+
   const category = await StreamCategory.findOne({
     where: { id: request.body.category_id },
   });

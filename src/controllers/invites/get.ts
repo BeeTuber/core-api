@@ -1,8 +1,8 @@
 import { initializeApp } from "firebase-admin";
 import { Auth } from "firebase-admin/auth";
 import { z } from "zod";
-import { OrganizationInvite, OrganizationUser } from "../../models";
-import { Controller, Handler } from "../../types";
+import { OrganizationInvite, OrganizationUser } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas

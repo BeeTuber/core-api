@@ -1,9 +1,13 @@
 import { z } from "zod";
-import { TwitchClient } from "../../../clients/twitch";
-import { getSecret } from "../../../helpers";
-import { StreamCategory, StreamPreset } from "../../../models";
-import { Connection, ConnectionType } from "../../../models/connection";
-import { Controller, Handler, TwitchSecret } from "../../../types";
+import { TwitchClient } from "~/clients/twitch";
+import { checkPermission, getSecret } from "~/helpers";
+import {
+  Connection,
+  ConnectionType,
+  StreamCategory,
+  StreamPreset,
+} from "~/models";
+import { Controller, Handler, TwitchSecret } from "~/types";
 
 /**
  * Define schemas
@@ -19,6 +23,10 @@ const handler: Handler<
   z.infer<typeof UpdateStreamPresetRequestSchema>,
   z.infer<typeof UpdateStreamPresetResponseSchema>
 > = async (request, reply) => {
+  if (!(await checkPermission(request, "stream-presets.apply"))) {
+    return reply.code(403).send({ error: "Permission denied" });
+  }
+
   // get existing preset id
   const params: { id?: string } = request.params as object;
   if (!params.id) {

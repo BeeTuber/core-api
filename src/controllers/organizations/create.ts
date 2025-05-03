@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { Organization } from "../../models";
-import { Controller, Handler } from "../../types";
+import { Organization } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas

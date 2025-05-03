@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import { z } from "zod";
-import { Organization, OrganizationUser, Roles } from "../../models";
-import { Controller, Handler } from "../../types";
+import { Organization, OrganizationUser, Role } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas
@@ -12,7 +12,10 @@ const ListOrganizationsResponseSchema = z.array(
   z.object({
     id: z.string(),
     name: z.string(),
-    role: z.nativeEnum(Roles),
+    role: z.object({
+      id: z.string(),
+      name: z.string(),
+    }),
   })
 );
 
@@ -25,6 +28,7 @@ const handler: Handler<
 > = async (request, reply) => {
   const organizationUsers = await OrganizationUser.findAll({
     where: { user_id: request.userId },
+    include: [Role],
   });
 
   const organizations = await Organization.findAll({

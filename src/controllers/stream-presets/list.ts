@@ -1,7 +1,8 @@
 import { omit } from "lodash";
 import { z } from "zod";
-import { StreamCategory, StreamPreset } from "../../models";
-import { Controller, Handler } from "../../types";
+import { checkPermission } from "~/helpers";
+import { StreamCategory, StreamPreset } from "~/models";
+import { Controller, Handler } from "~/types";
 
 /**
  * Define schemas
@@ -32,6 +33,10 @@ const handler: Handler<
   any,
   z.infer<typeof ListStreamPresetResponseSchema>
 > = async (request, reply) => {
+  if (!(await checkPermission(request, "stream-presets.read"))) {
+    return reply.code(403).send({ error: "Permission denied" });
+  }
+
   const presets = await StreamPreset.findAll({
     where: {
       organization_id: request.organizationId,
