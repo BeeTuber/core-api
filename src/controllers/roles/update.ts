@@ -7,12 +7,12 @@ import { Controller, Handler } from "~/types";
 /**
  * Define schemas
  */
-const CreateRoleRequestSchema = z.object({
+const UpdateRoleRequestSchema = z.object({
   name: z.string().min(1).max(255),
   permission_ids: z.array(z.string()),
 });
 
-const CreateRoleResponseSchema = z.object({
+const UpdateRoleResponseSchema = z.object({
   id: z.string(),
 });
 
@@ -20,11 +20,28 @@ const CreateRoleResponseSchema = z.object({
  * Handler
  */
 const handler: Handler<
-  z.infer<typeof CreateRoleRequestSchema>,
-  z.infer<typeof CreateRoleResponseSchema>
+  z.infer<typeof UpdateRoleRequestSchema>,
+  z.infer<typeof UpdateRoleResponseSchema>
 > = async (request, reply) => {
   if (!(await checkPermission(request, "roles.write"))) {
     return reply.code(403).send({ error: "Permission denied" });
+  }
+
+  // get existing preset id
+  const params: { id?: string } = request.params as object;
+  if (!params.id) {
+    return reply.code(404);
+  }
+
+  // get existing role
+  const role = await Role.findOne({
+    where: {
+      organization_id: request.organizationId,
+      id: params.id,
+    },
+  });
+  if (!role) {
+    return reply.code(404).send({ message: "Role not found" });
   }
 
   // load permissions
@@ -40,13 +57,9 @@ const handler: Handler<
   }
 
   // insert role into DB
-  const role = await Role.create(
-    {
-      organization_id: request.organizationId,
-      name: request.body.name,
-    },
-    { returning: true }
-  );
+  await role.update({
+    name: request.body.name,
+  });
 
   // assign permissions
   await RolePermission.bulkCreate(
@@ -56,19 +69,29 @@ const handler: Handler<
     }))
   );
 
-  reply.code(201);
+  // remove old perms
+  await RolePermission.destroy({
+    where: {
+      role_id: role.id,
+      permission_id: {
+        [Op.notIn]: permissions.map((perm) => perm.id),
+      },
+    },
+  });
+
+  reply.code(200);
   return reply.send({ id: role.id });
 };
 
 /**
  * Define route
  */
-export const createRoleController: Controller = {
+export const updateRoleController: Controller = {
   handler: handler,
   schema: {
-    body: CreateRoleRequestSchema,
+    body: UpdateRoleRequestSchema,
     response: {
-      201: CreateRoleResponseSchema,
+      200: UpdateRoleResponseSchema,
     },
   },
 };
