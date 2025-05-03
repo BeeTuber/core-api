@@ -26,7 +26,7 @@ const handler: Handler<
         [Op.iLike]: `%${search}%`,
       },
     },
-    limit: 300,
+    limit: 30,
   });
 
   reply.code(200);
