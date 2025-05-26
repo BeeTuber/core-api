@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Organization } from "~/models";
+import { Organization, OrganizationUser } from "~/models";
 import { Controller, Handler } from "~/types";
 
 /**
@@ -31,15 +31,25 @@ const handler: Handler<
       message: "Max 3 organizations per user",
     });
   }
+  
+  console.log(request)
 
   // store new org in DB
   const org = await Organization.create(
     {
       name: request.body.name,
       created_by: request.userId,
+      updated_by: request.userId,
     },
     { returning: true }
   );
+
+  // add user to the org
+  await OrganizationUser.create({
+    organization_id: org.id,
+    user_id: request.userId,
+    role_id: "" // TODO: assign one of the global roles
+  })
 
   return reply.code(201).send(org);
 };
@@ -47,12 +57,15 @@ const handler: Handler<
 /**
  * Define route
  */
-export const createOrganizationPresetController: Controller = {
+export const createOrganizationController: Controller = {
   handler: handler,
   schema: {
     body: CreateOrganizationRequestSchema,
     response: {
       200: CreateOrganizationResponseSchema,
     },
+  },
+  config: {
+    bypassOrganizationCheck: true,
   },
 };

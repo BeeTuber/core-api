@@ -4,7 +4,6 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -27,8 +26,8 @@ export class OrganizationUser extends Model {
   @Column(DataType.STRING)
   user_id!: string;
 
-  @Column(DataType.UUIDV4)
   @ForeignKey(() => Role)
+  @Column(DataType.UUIDV4)
   role_id!: string;
 
   /**
@@ -37,6 +36,6 @@ export class OrganizationUser extends Model {
   @BelongsTo(() => Organization)
   organization?: Organization;
 
-  @HasOne(() => Role)
+  @BelongsTo(() => Role)
   role?: Role;
 }

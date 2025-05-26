@@ -38,8 +38,9 @@ export class StreamPreset extends Model {
   @Column(DataType.ARRAY(DataType.STRING))
   tags!: string[];
 
-  @Column(DataType.UUID)
   @AllowNull
+  @ForeignKey(() => StreamCategory)
+  @Column(DataType.UUID)
   category_id?: string;
 
   @Column(DataType.BOOLEAN)

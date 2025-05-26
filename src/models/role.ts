@@ -6,6 +6,7 @@ import {
   Column,
   DataType,
   Default,
+  ForeignKey,
   HasMany,
   Model,
   PrimaryKey,
@@ -30,8 +31,9 @@ export class Role extends Model {
   @Column(DataType.UUID)
   declare id: string;
 
-  @Column(DataType.UUIDV4)
   @AllowNull
+  @ForeignKey(() => Organization)
+  @Column(DataType.UUIDV4)
   organization_id?: string;
 
   @Column(DataType.BOOLEAN)

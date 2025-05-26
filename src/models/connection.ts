@@ -4,6 +4,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  ForeignKey,
   Model,
   PrimaryKey,
   Table,
@@ -31,6 +32,10 @@ export class Connection extends Model {
 
   @Column(DataType.STRING)
   type!: ConnectionType;
+
+  @ForeignKey(() => Organization)
+  @Column(DataType.UUID)
+  organization_id!: string;
 
   /**
    * Relations

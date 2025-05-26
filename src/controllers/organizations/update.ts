@@ -41,7 +41,7 @@ const handler: Handler<
 /**
  * Define route
  */
-export const createOrganizationPresetController: Controller = {
+export const updateOrganizationController: Controller = {
   handler: handler,
   schema: {
     body: UpdateOrganizationRequestSchema,

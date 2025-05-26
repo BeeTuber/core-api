@@ -24,6 +24,10 @@ type AuthUserPluginOptions = {};
 const organizationCheckMiddleware: FastifyPluginCallback<
   AuthUserPluginOptions
 > = (fastifyInstance: FastifyInstance, opts: AuthUserPluginOptions, done) => {
+  fastifyInstance.decorateRequest("userId", undefined);
+  fastifyInstance.decorateRequest("authTokenHash", undefined);
+  fastifyInstance.decorateRequest("organizationId", undefined);
+
   /**
    * User Data
    */
@@ -48,8 +52,8 @@ const organizationCheckMiddleware: FastifyPluginCallback<
         return reply.code(401).send({ error: "Invalid auth token" });
       }
 
-      fastifyInstance.decorateRequest("userId", sub);
-      fastifyInstance.decorateRequest("authTokenHash", tokenHash);
+      request.userId = sub;
+      request.authTokenHash = tokenHash;
     } catch (err) {
       console.error("JWT parsing failed", err);
       return reply.code(401).send({ error: "Invalid auth token" });
@@ -65,11 +69,12 @@ const organizationCheckMiddleware: FastifyPluginCallback<
     const organizationId = request.headers["x-organization-id"] as
       | string
       | undefined;
-    fastifyInstance.decorateRequest("organizationId", organizationId);
+    request.organizationId = organizationId;
 
     if (!organizationId && !bypassOrganizationCheck) {
       const msg =
         "Missing organization identifier. Provide x-organization-id header.";
+      console.log(msg);
       reply.code(400).send({ error: msg });
       return;
     }
@@ -82,6 +87,6 @@ const organizationCheckMiddleware: FastifyPluginCallback<
  * Register Plugin
  */
 export default fastifyPlugin(organizationCheckMiddleware, {
-  name: "fastify-auth-user",
+  name: "fastify-auth",
   fastify: ">= 5.2",
 });

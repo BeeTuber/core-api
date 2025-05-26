@@ -60,4 +60,7 @@ export const listOrganizationsController: Controller = {
       200: ListOrganizationsResponseSchema,
     },
   },
+  config: {
+    bypassOrganizationCheck: true,
+  },
 };

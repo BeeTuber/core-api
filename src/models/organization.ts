@@ -30,8 +30,10 @@ export class Organization extends Model {
   @Column(DataType.STRING)
   name!: string;
 
-  @Column(DataType.UUIDV4)
+  @Column(DataType.STRING)
   created_by!: string;
+  @Column(DataType.STRING)
+  updated_by!: string;
 
   /**
    * Relations

@@ -2,14 +2,20 @@ import fastifyCors from "@fastify/cors";
 import fastifyHelmet from "@fastify/helmet";
 import fastifySensible from "@fastify/sensible";
 import fastify, { FastifyError, FastifyInstance } from "fastify";
+import { serializerCompiler, validatorCompiler, ZodTypeProvider } from "fastify-type-provider-zod";
 import { ZodError } from "zod";
 import config from "./config";
 import { models } from "./models";
-import { authUser, fastifyRedis, fastifySequelize } from "./plugins";
+import {
+  authUser,
+  fastifyQueues,
+  fastifyRedis,
+  fastifySequelize,
+} from "./plugins";
 import { registerRoutes } from "./router";
 import { ErrorResponseBody } from "./types";
 
-export let app: FastifyInstance
+export let app: FastifyInstance;
 
 const start = () => {
   // init app
@@ -25,7 +31,11 @@ const start = () => {
             },
           },
         },
-  });
+  }).withTypeProvider<ZodTypeProvider>();
+
+  // use zod
+  app.setValidatorCompiler(validatorCompiler);
+  app.setSerializerCompiler(serializerCompiler);
 
   // custom error response
   app.setErrorHandler(function (
@@ -42,15 +52,16 @@ const start = () => {
     reply.status(err.statusCode ?? 500).send(body);
   });
 
+  // DB connections
+  app.register(fastifySequelize, { ...config.db, models });
+  app.register(fastifyRedis, config.redis);
+
   // plugins
   app.register(fastifySensible);
   app.register(fastifyHelmet);
   app.register(fastifyCors);
   app.register(authUser);
-
-  // DB connections
-  app.register(fastifySequelize, { ...config.db, models });
-  app.register(fastifyRedis, config.redis);
+  app.register(fastifyQueues);
 
   // serve
   registerRoutes(app);

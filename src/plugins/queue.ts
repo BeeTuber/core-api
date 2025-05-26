@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginCallback } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 import { RedisClientOptions } from "redis";
-import { initQueues, Queues } from "../worker";
+import { initQueues, Queues } from "../jobs";
 
 /**
  * Shim plugin type

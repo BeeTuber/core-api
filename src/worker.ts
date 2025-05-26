@@ -1,14 +1,6 @@
-import { Queue, Worker } from "bullmq";
-import { registerSchedule, scheduleJobs } from "./jobs/schedule";
+import { Worker } from "bullmq";
+import { registerSchedule, scheduleJobs } from "./jobs/";
 import { sendEmailJob, sendEmailJobName } from "./jobs/sendEmail";
-
-export type Queues = {
-  default: Queue;
-};
-
-export const initQueues = (): Queues => ({
-  default: new Queue("default"),
-});
 
 const startDefaultWorker = () =>
   new Worker("default", async (job: { name: string; data: any }) => {

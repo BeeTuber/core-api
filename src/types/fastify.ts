@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyContextConfig, FastifyReply, FastifyRequest } from "fastify";
 import { ZodSchema } from "zod";
 
 export type ErrorResponseBody = {
@@ -35,4 +35,5 @@ export type Controller = {
     body?: ZodSchema;
     response: Record<number, ZodSchema>;
   };
+  config?: FastifyContextConfig;
 };
