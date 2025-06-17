@@ -26,6 +26,10 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       ...changelog,
     });
 
