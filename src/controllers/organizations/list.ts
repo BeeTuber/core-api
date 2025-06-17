@@ -34,7 +34,7 @@ const handler: Handler<
   const organizations = await Organization.findAll({
     where: {
       id: {
-        [Op.in]: organizationUsers.map((tu) => tu.organization_id),
+        [Op.in]: organizationUsers.map((ou) => ou.get("organization_id")),
       },
     },
   });
@@ -42,9 +42,11 @@ const handler: Handler<
   reply.code(200);
   return reply.send(
     organizations.map((organization) => ({
-      id: organization.id,
-      name: organization.name,
-      role: organizationUsers.find((tu) => tu.id === organization.id)?.role,
+      id: organization.get("id"),
+      name: organization.get("name"),
+      role: organizationUsers
+        .find((tu) => tu.id === organization.id)
+        ?.get("role"),
     }))
   );
 };
@@ -57,7 +59,7 @@ export const listOrganizationsController: Controller = {
   schema: {
     body: ListOrganizationsRequestSchema,
     response: {
-      200: ListOrganizationsResponseSchema,
+      // 200: ListOrganizationsResponseSchema,
     },
   },
   config: {

@@ -36,6 +36,9 @@ export class Role extends Model {
   @Column(DataType.UUIDV4)
   organization_id?: string;
 
+  @Column(DataType.STRING)
+  name!: string;
+
   @Column(DataType.BOOLEAN)
   is_global!: boolean;
 

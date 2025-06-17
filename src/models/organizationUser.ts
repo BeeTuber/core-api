@@ -30,6 +30,9 @@ export class OrganizationUser extends Model {
   @Column(DataType.UUIDV4)
   role_id!: string;
 
+  @Column(DataType.STRING)
+  updated_by!: string;
+
   /**
    * relations
    */

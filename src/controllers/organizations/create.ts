@@ -31,8 +31,6 @@ const handler: Handler<
       message: "Max 3 organizations per user",
     });
   }
-  
-  console.log(request)
 
   // store new org in DB
   const org = await Organization.create(
@@ -44,12 +42,17 @@ const handler: Handler<
     { returning: true }
   );
 
-  // add user to the org
-  await OrganizationUser.create({
-    organization_id: org.id,
-    user_id: request.userId,
-    role_id: "" // TODO: assign one of the global roles
-  })
+  // add user to the org as owner
+  const ou = await OrganizationUser.create(
+    {
+      organization_id: org.id,
+      user_id: request.userId,
+      role_id: "bb588713-19ef-4604-94f5-0cec1bc77b7f",
+      updated_by: request.userId,
+    },
+    { returning: true }
+  );
+  console.log(ou);
 
   return reply.code(201).send(org);
 };
